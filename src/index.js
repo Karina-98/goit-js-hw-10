@@ -28,10 +28,10 @@ function onInputSource(e) {
         if (data.length > 10) {
         Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
         } else if (data.length > 2 && data.length <= 10) {
-           data.reduce((markup, form) => markup + createMarkup(form), "")
+            createMarkup(data)
             
         } else if (data.length === 1) {
-             data.reduce((markup, form) => markup + createMarkupAll(form), "")
+            createMarkupAll(data)
            
         } else if (data.status === 404) {
             console.log(data);
@@ -42,21 +42,20 @@ function onInputSource(e) {
     
 }
 
-function createMarkup({ name, flags }) {
-   
-    return countryList.innerHTML = `
+function createMarkup(data) {
+    const markup = data.map(({ name, flags }) => `
     <li class="country-list__item">
         <img class="country-list__img" src="${flags.svg}" alt="flag of ${name.official}"  width="40" height="30" />
         <p class="country-list__text">${name.official}</p>
-      </li>`;
-    
-    
+      </li>`).join('');
+
+    return countryList.innerHTML = markup;
 }
 
 
-function createMarkupAll({ name, capital, population, flags, languages }) {
- 
-    return countryInfo.innerHTML = `<div class="country__flag">
+function createMarkupAll(data) {
+    const markup = data.map(({ name, capital, population, flags, languages }) =>
+        `<div class="country__flag">
         <img class="country__img" src="${flags.svg}" alt="flag of ${name.official}" width="40" height="30">
         <p class="country__name">${name.official}</p>
     </div>
@@ -70,7 +69,10 @@ function createMarkupAll({ name, capital, population, flags, languages }) {
         <li class="country__item"> <b>Languages</b>:
         <span class="country__span">${Object.values(languages).join(', ')}</span>
         </li>
-    </ul>`
+    </ul>`).join('');
+
+    return countryInfo.innerHTML = markup;
+
 }
 
 function clearHtml() {
