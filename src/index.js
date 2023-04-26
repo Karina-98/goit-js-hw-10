@@ -15,37 +15,48 @@ input.addEventListener("input", debounce(onInputSource, DEBOUNCE_DELAY))
 function onInputSource(e) {
     e.preventDefault()
     const inputValue = e.target.value;
+    if (inputValue.trim() === 0) {
+        Notiflix.Notify.warning('Please enter country name.');
+        clearHtml();
+        return;
+    }
+
+
+
     fetchCountries(inputValue).then((data) => {
-        if (data === undefined) {
-            Notify.failure('Oops, there is no country with that name')
-        } else if (data.length > 10) {
-            Notify.info('Too many matches found. Please enter a more specific name.')
+        clearHtml();
+        if (data.length > 10) {
+        Notiflix.Notify.info('Too many matches found. Please enter a more specific name.')
         } else if (data.length > 2 && data.length <= 10) {
-             data.reduce((markup, form)=> createMarkup(form), "")
+           data.reduce((markup, form) => markup + createMarkup(form), "")
+            
         } else if (data.length === 1) {
-            data.reduce((markup, form)=> createMarkupAll(form), "")
+             data.reduce((markup, form) => markup + createMarkupAll(form), "")
+           
         } else if (data.status === 404) {
-            console.log(data)
-            Notiflix.Notify.failure('Oops, there is no country with that name')
+            console.log(data);
+        Notiflix.Notify.failure('Oops, there is no country with that name')
         }
-    })
+    }).catch(error => {error});
 
     
 }
 
-function createMarkup({name, flags }) {
+function createMarkup({ name, flags }) {
+   
     return countryList.innerHTML = `
     <li class="country-list__item">
         <img class="country-list__img" src="${flags.svg}" alt="flag of ${name.official}"  width="40" height="30" />
         <p class="country-list__text">${name.official}</p>
       </li>`;
-    console.log(form);
+    
     
 }
 
 
 function createMarkupAll({ name, capital, population, flags, languages }) {
-    return countryList.innerHTML = `<div class="country__flag">
+ 
+    return countryInfo.innerHTML = `<div class="country__flag">
         <img class="country__img" src="${flags.svg}" alt="flag of ${name.official}" width="40" height="30">
         <p class="country__name">${name.official}</p>
     </div>
@@ -64,5 +75,5 @@ function createMarkupAll({ name, capital, population, flags, languages }) {
 
 function clearHtml() {
     countryList.innerHTML = "";
-    countryInfo.innerHTML = ""
+    countryInfo.innerHTML = "";
 }
