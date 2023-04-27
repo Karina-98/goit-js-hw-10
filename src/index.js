@@ -15,6 +15,7 @@ input.addEventListener("input", debounce(onInputSource, DEBOUNCE_DELAY))
 function onInputSource(e) {
     e.preventDefault()
     const inputValue = e.target.value;
+    
     if (inputValue.trim() === 0) {
         Notiflix.Notify.warning('Please enter country name.');
         clearHtml();
